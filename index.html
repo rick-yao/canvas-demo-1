@@ -16,25 +16,47 @@
       let ctx = canvas.getContext("2d");
       ctx.fillStyle = "black";
       ctx.strokeStyle = "none";
-
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
       let painting = false;
-      canvas.onmousedown = () => {
-        painting = true;
-      };
 
-      canvas.onmousemove = (e) => {
-        if (painting === true) {
-          ctx.beginPath();
-          ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
-          ctx.stroke();
-          ctx.fill();
-        } else {
-          console.log("do nothing");
-        }
-      };
-      canvas.onmouseup = () => {
-        painting = false;
-      };
+      let isTouchDevice = "ontouchstart" in document.documentElement;
+      function drawLine(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+      if (isTouchDevice) {
+        canvas.ontouchstart = (u) => {
+          let x = u.touches[0].clientX;
+          let y = u.touches[0].clientY;
+          last = [x, y];
+        };
+        canvas.ontouchmove = (u) => {
+          let x = u.touches[0].clientX;
+          let y = u.touches[0].clientY;
+          console.log("最开始的last：" + last);
+          drawLine(last[0], last[1], x, y);
+          console.log("画线之后的last：" + last);
+          last = [x, y];
+          console.log("更改后的last：" + last);
+        };
+      } else {
+        canvas.onmousedown = (e) => {
+          painting = true;
+          last = [e.clientX, e.clientY];
+        };
+        canvas.onmousemove = (e) => {
+          if (painting === true) {
+            drawLine(last[0], last[1], e.clientX, e.clientY);
+            last = [e.clientX, e.clientY];
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
     </script>
     <!-- <div id="canvas"></div>
     <script>
