@@ -7,9 +7,38 @@
     <link rel="stylesheet" href="sytle.css" />
   </head>
   <body>
-    <div id="canvas"></div>
+    <canvas id="canvas" width="800" height="800"></canvas>
     <script>
-      canvas.onclick = (e) => {
+      let canvas = document.getElementById("canvas");
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      //设定当前高度宽度为“当前文档”的高度
+      let ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.strokeStyle = "none";
+
+      let painting = false;
+      canvas.onmousedown = () => {
+        painting = true;
+      };
+
+      canvas.onmousemove = (e) => {
+        if (painting === true) {
+          ctx.beginPath();
+          ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.fill();
+        } else {
+          console.log("do nothing");
+        }
+      };
+      canvas.onmouseup = () => {
+        painting = false;
+      };
+    </script>
+    <!-- <div id="canvas"></div>
+    <script>
+      canvas.onmousemove = (e) => {
         console.log(e); //console log 调试
         console.log(e.clientX);
         console.log(e.clientY);
@@ -27,6 +56,6 @@
         //可以通过以上的方式给元素加样式
         canvas.appendChild(div);
       };
-    </script>
+    </script> -->
   </body>
 </html>
